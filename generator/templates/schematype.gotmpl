@@ -1,5 +1,5 @@
 {{ define "schemaType" }}
-  {{- if and (or ((len .AllOf) gt 0) .IsAnonymous) ( not .IsMap) }}
+  {{- if and (or (gt (len .AllOf) 0) .IsAnonymous) ( not .IsMap) }}
     {{- template "schemaBody" . }}
   {{- else }}
     {{- if and (not .IsMap) .IsNullable }}*{{ end }}
