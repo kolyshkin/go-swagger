@@ -12,8 +12,7 @@ if ! hash vndr; then
 	exit 1
 fi
 
-if [ $# -eq 0 ] || [ "$1" != "github.com/go-openapi/spec" ] && [ "$1" != "github.com/go-openapi/jsonpointer" ] ; then
+if [ $# -eq 0 ] || [ "$1" != "github.com/go-openapi/spec" ] ; then
 	# github.com/go-openapi/spec vendor has local changes, see f6063789
-	# github.com/go-openapi/jsonpointer vendor has local changes, see 5793aa66
-	vndr -whitelist=^github.com/go-openapi/spec -whitelist=^github.com/go-openapi/jsonpointer "$@"
+	vndr -whitelist=^github.com/go-openapi/spec "$@"
 fi
