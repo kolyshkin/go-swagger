@@ -1,15 +1,12 @@
-FROM golang:1.7-alpine
-MAINTAINER Ivan Porto Carrer <ivan@flanders.co.nz> (@casualjim)
+FROM golang:1.16-alpine AS base
 
-RUN apk --update add ca-certificates shared-mime-info mailcap git &&\
-  go get -u github.com/go-openapi/runtime &&\
-  go get -u github.com/asaskevich/govalidator &&\
-  go get -u golang.org/x/net/context &&\
-  go get -u github.com/tylerb/graceful &&\
-  go get -u github.com/jessevdk/go-flags &&\
-  go get -u golang.org/x/net/context/ctxhttp
+FROM base AS build
+ENV GO111MODULE=off
+WORKDIR /go/src/github.com/go-swagger/go-swagger
+COPY . .
+RUN go build -o ./dist/swagger-musl -a -tags netgo -installsuffix netgo ./cmd/swagger
 
-ADD ./dist/swagger-musl /usr/bin/swagger
-
+FROM alpine AS final
+COPY --from=build /go/src/github.com/go-swagger/go-swagger/dist/swagger-musl /usr/bin/swagger
 ENTRYPOINT ["/usr/bin/swagger"]
 CMD ["--help"]
