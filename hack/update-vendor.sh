@@ -1,12 +1,18 @@
-#!/bin/zsh
+#!/bin/sh
 
-# go to project root
-cd `git rev-parse --show-toplevel`
+# This file is just wrapper around vndr (github.com/LK4D4/vndr) tool.
+# For updating dependencies you should change `vendor.conf` file in root of the
+# project. Please refer to https://github.com/LK4D4/vndr/blob/master/README.md for
+# vndr usage.
 
-gvt update --all
+set -e
 
-# not interested in the test files thank you.
-rm -rf vendor/**/*_test.go
+if ! hash vndr; then
+	echo "Please install vndr with \"go get github.com/LK4D4/vndr\" and put it in your \$GOPATH"
+	exit 1
+fi
 
-# remove some items that are problematic for a continuous build and not actually in use
-rm -rf vendor/github.com/tylerb/graceful/tests
+if [ $# -eq 0 ] || [ "$1" != "github.com/go-openapi/spec" ] ; then
+	# github.com/go-openapi/spec vendor has local changes, see f6063789
+	vndr -whitelist=^github.com/go-openapi/spec "$@"
+fi
